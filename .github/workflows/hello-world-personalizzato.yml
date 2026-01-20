@@ -1,0 +1,35 @@
+name: Hello World Personalizzato
+run-name: ${{ github.actor }} sta testando GitHub Actions
+on: [push]
+
+jobs:
+  hello-world:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Mostra informazioni di contesto
+        run: |
+          echo "Repository: ${{ github.repository }}"
+          echo "Commit SHA: ${{ github.sha }}"
+          echo "Repository URL: ${{ github.repositoryUrl }}"
+          echo "Workflow: ${{ github.workflow }}"
+          echo "Run ID: ${{ github.run_id }}"
+          echo "Trigger actor: ${{ github.actor }}"
+          echo "Commit message: ${{ github.event.head_commit.message }}"
+          echo "Autore commit: ${{ github.event.head_commit.author.name }}"
+          echo "Data/Ora esecuzione (UTC): $(date -u)"
+
+      - name: Lista file modificati nell'ultimo commit
+        run: |
+          if git rev-parse HEAD^ >/dev/null 2>&1; then
+            echo "File modificati nel commit HEAD:"
+            git show --name-only --pretty=format:'' HEAD | sed '/^$/d' | sed 's/^/- /'
+          else
+            echo "Storico con un solo commit: elenco file tracciati in HEAD:"
+            git ls-tree --name-only -r HEAD | sed 's/^/- /'
+          fi
+
+      - name: Saluto finale
+        run: echo "Ciao ${{ github.actor }}! Il workflow personalizzato ha terminato."
